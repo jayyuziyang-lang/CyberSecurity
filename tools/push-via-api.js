@@ -198,16 +198,22 @@ async function mapLimit(items, limit, fn) {
 
   // 6) workflow 文件单独用 Contents API 提交
   //    （原因见上面第 2 步的注释：放进 tree 会让整个请求 404）
+  //
+  //    注意：写 .github/workflows/ 需要 token 带 workflow 权限范围。
+  //    gh 默认登录拿到的范围通常是 repo/gist/read:org，不含 workflow，
+  //    此时 GitHub 会返回 404（报错信息同样具有误导性）。
+  //    这不是致命错误 —— 其余文件都已经上传成功了，
+  //    所以这里只警告并给出解决办法，不让整个脚本失败。
+  const skippedWorkflows = [];
   if (workflowFiles.length) {
-    console.log(`\n  提交 ${workflowFiles.length} 个 workflow 文件...`);
+    console.log(`\n  尝试提交 ${workflowFiles.length} 个 workflow 文件...`);
     for (const abs of workflowFiles) {
       const rel = path.relative(ROOT, abs).split(path.sep).join('/');
-      // Contents API 需要知道文件是否已存在（存在则必须带 sha 才能覆盖）
       let existingSha = null;
       try {
         const cur = ghApi(`repos/${REPO}/contents/${rel}?ref=${BRANCH}`, 'GET');
         existingSha = cur.sha;
-      } catch (_) { /* 不存在，创建即可 */ }
+      } catch (_) { /* 不存在 */ }
 
       const body = {
         message: `添加 ${rel}`,
@@ -215,12 +221,37 @@ async function mapLimit(items, limit, fn) {
         branch: BRANCH
       };
       if (existingSha) body.sha = existingSha;
-      ghApi(`repos/${REPO}/contents/${rel}`, 'PUT', body);
-      console.log(`    ✓ ${rel}`);
+
+      try {
+        ghApi(`repos/${REPO}/contents/${rel}`, 'PUT', body, 1);   // 权限问题重试无意义
+        console.log(`    ✓ ${rel}`);
+      } catch (e) {
+        const msg = (e.stderr || e.message || '').toString();
+        if (/404|Not Found/i.test(msg)) {
+          skippedWorkflows.push(rel);
+          console.log(`    - ${rel}  （跳过：token 缺少 workflow 权限）`);
+        } else {
+          throw e;
+        }
+      }
     }
   }
 
   console.log('');
+  if (skippedWorkflows.length) {
+    console.log('注意：以下文件没上传成功，因为 GitHub 的 token 缺少 workflow 权限范围：');
+    skippedWorkflows.forEach(f => console.log('  - ' + f));
+    console.log('');
+    console.log('解决办法（二选一）：');
+    console.log('  A. 执行一次：gh auth refresh -h github.com -s workflow');
+    console.log('     然后重新运行本脚本即可补上。');
+    console.log('  B. 直接在 GitHub 网页上建这两个文件（内容从本地复制）：');
+    console.log(`     https://github.com/${REPO}/new/${BRANCH}/.github/workflows`);
+    console.log('');
+    console.log('说明：这两个文件只是「自动发布到 Pages」和「自动跑自检」，');
+    console.log('      不影响仓库内容和本地运行，缺少它们项目照样能用。');
+    console.log('');
+  }
   console.log(`完成 → https://github.com/${REPO}/tree/${BRANCH}`);
 })().catch(err => {
   const msg = (err.stderr || err.message || '').toString();
