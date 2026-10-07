@@ -63,7 +63,7 @@ echo.
 echo    Open http://127.0.0.1:8081/ and log in as:
 echo       student1 / 123456
 echo.
-echo    Expected: mastery 25.00, 2 weak knowledge points
+echo    Expected: mastery 33.33  (2 weak / 0 basic / 1 proficient)
 echo.
 set PGPASSWORD=
 pause

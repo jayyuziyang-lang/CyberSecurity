@@ -129,8 +129,8 @@ ON CONFLICT (news_id, user_id) DO NOTHING;
 INSERT INTO wrong_set (user_id, quiz_id, selected_answer, error_count, is_resolved, created_at, updated_at)
 SELECT u.id, q.id, v.selected_answer, v.error_count, FALSE, NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day'
 FROM (VALUES
-    ('以下哪种密码强度最高？', 'B', 2),
-    ('防范 SQL 注入最有效的手段是？', 'A', 1)
+    ('防范 SQL 注入最有效的手段是？', 'A', 1),            -- → 知识点 KP05 SQL 注入
+    ('以下哪种做法最容易导致个人信息泄露？', 'A', 2)      -- → 知识点 KP08 个人信息保护
 ) AS v(question, selected_answer, error_count)
 JOIN quiz q ON q.question = v.question
 CROSS JOIN "user" u
@@ -142,10 +142,14 @@ ON CONFLICT (user_id, quiz_id) DO NOTHING;
 -- 为什么需要它：wrong_set 实际承担的是「作答流水」的角色
 -- （is_resolved=true 表示已掌握，不出现在错题本里）。
 -- 如果 student1 只有错题，演示开场算出来的掌握度就是清一色的 0.00，
--- 看起来像坏了、也讲不出层次。加上这条之后：
---     密码安全 → 2 题作答、1 对 1 错 → 50.00 分（薄弱）
---     SQL 注入 → 1 题作答、0 对 1 错 →  0.00 分（薄弱）
--- 平均 25.00 分，既有对比又能体现算法在算东西。
+-- 看起来像坏了、也讲不出层次。
+--
+-- 这里刻意选了「密码安全」知识点下的一道题并标记为答对，
+-- 于是演示开场就是：
+--     密码安全     → 1 题作答、1 对 0 错 → 100.00 分（熟练）
+--     SQL 注入     → 1 题作答、0 对 1 错 →   0.00 分（薄弱）
+--     个人信息保护 → 1 题作答、0 对 1 错 →   0.00 分（薄弱）
+-- 平均 33.33 分，三个知识点、三种状态，讲起来有对比。
 INSERT INTO wrong_set (user_id, quiz_id, selected_answer, error_count, is_resolved, created_at, updated_at)
 SELECT u.id, q.id, 'B', 0, TRUE, NOW() - INTERVAL '2 day', NOW() - INTERVAL '2 day'
 FROM quiz q

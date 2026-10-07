@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网络安全科普答题平台 · 在线演示</title>
+<!--
+  ===========================================================================
+   静态在线演示 —— 不需要后端、不需要数据库、不需要联网请求
+  ---------------------------------------------------------------------------
+   为什么做这个：
+     正式版本是「小程序 + Java 后端 + PostgreSQL」，要客户看到得先起服务。
+     但很多时候你只是想让别人"看一眼长什么样"，
+     所以这里把全部页面和演示数据都内联进这一个 HTML，
+     扔到任何静态托管（GitHub Pages / 任何服务器）就能看。
+
+   数据说明：
+     所有数据都是写死的内联数据，算法与后端 KnowledgeMasteryServiceImpl 一致
+     （mastery = 100 x (0.5*A + 0.3*(1-P) + 0.2*R)），
+     所以「答题后掌握度变化」是真的在算，不是假动画。
+  ===========================================================================
+-->
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --brand:#2b5cff;--brand-dark:#1e46d0;
+  --weak:#e54d42;--basic:#f0a020;--proficient:#19be6b;
+  --text:#222;--sub:#666;--mute:#999;--line:#e6eaf0;--bg:#f4f6f8;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  background:#dfe4ea;color:var(--text);font-size:14px;line-height:1.6;
+  display:flex;justify-content:center;padding:20px 12px 40px;
+}
+
+/* ---------------- 手机外框 ---------------- */
+.phone{
+  width:400px;height:820px;background:var(--bg);border-radius:38px;
+  border:10px solid #1f2d3d;overflow:hidden;position:relative;
+  box-shadow:0 20px 50px rgba(31,45,61,.3);display:flex;flex-direction:column;
+}
+.statusbar{
+  height:34px;background:#fff;flex-shrink:0;display:flex;align-items:center;
+  justify-content:space-between;padding:0 20px;font-size:12px;font-weight:600;
+}
+.navbar{
+  height:44px;flex-shrink:0;background:#fff;display:flex;align-items:center;
+  justify-content:center;font-size:16px;font-weight:600;
+  border-bottom:1px solid var(--line);position:relative;
+}
+.navbar .back{
+  position:absolute;left:14px;font-size:20px;color:#666;cursor:pointer;
+  user-select:none;display:none;
+}
+.screen{flex:1;overflow-y:auto;padding:14px 14px 20px}
+.screen::-webkit-scrollbar{width:0}
+
+/* ---------------- 底部导航 ---------------- */
+.tabbar{
+  height:56px;background:#fff;border-top:1px solid var(--line);flex-shrink:0;
+  display:flex;align-items:center;
+}
+.tabbar button{
+  flex:1;background:none;border:none;font-size:12px;color:var(--mute);
+  display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;
+  font-family:inherit;padding:6px 0;
+}
+.tabbar button .ico{font-size:19px;line-height:1}
+.tabbar button.active{color:var(--brand);font-weight:600}
+
+/* ---------------- 通用 ---------------- */
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.card.nopad{padding:0;overflow:hidden}
+button.btn{
+  background:var(--brand);color:#fff;border:none;border-radius:8px;
+  padding:10px 20px;font-size:14px;cursor:pointer;font-family:inherit;
+}
+button.btn:active{opacity:.85}
+button.btn.block{width:100%;padding:13px}
+button.btn.outline{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+button.btn.sm{padding:6px 14px;font-size:12.5px}
+button.btn:disabled{background:#b9c6dd;cursor:not-allowed}
+.empty{text-align:center;padding:50px 20px;color:var(--mute);font-size:13.5px}
+.empty b{display:block;font-size:15px;color:var(--sub);margin-bottom:8px}
+
+/* ---------------- 登录页 ---------------- */
+.login{min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 26px}
+.login h1{font-size:20px;text-align:center;margin-bottom:6px}
+.login .sub{text-align:center;color:var(--mute);font-size:12.5px;margin-bottom:26px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;color:var(--sub);margin-bottom:6px}
+.field input{
+  width:100%;height:44px;border:1px solid var(--line);border-radius:10px;
+  padding:0 14px;font-size:14px;outline:none;font-family:inherit;
+}
+.field input:focus{border-color:var(--brand)}
+.demo-accounts{margin-top:20px;border-top:1px dashed var(--line);padding-top:14px}
+.demo-accounts p{font-size:12px;color:var(--mute);margin-bottom:8px}
+.demo-row{display:flex;gap:8px}
+.demo-row button{
+  flex:1;background:#f4f6f8;border:none;border-radius:8px;padding:8px 6px;
+  font-size:11.5px;color:var(--sub);cursor:pointer;font-family:inherit;line-height:1.4;
+}
+.demo-row button b{display:block;color:var(--text);font-size:13px}
+
+/* ---------------- 诊断页 ---------------- */
+.overview{
+  background:linear-gradient(135deg,#2b5cff,#4a8dff);border-radius:14px;
+  padding:22px 20px 18px;color:#fff;margin-bottom:12px;
+  box-shadow:0 8px 22px rgba(43,92,255,.25);
+}
+.ov-title{font-size:13px;opacity:.9;margin-bottom:8px}
+.ov-score{display:flex;align-items:baseline;gap:4px}
+.ov-score .n{font-size:52px;font-weight:700;line-height:1}
+.ov-score .u{font-size:15px;opacity:.9}
+.ov-score-desc{margin-left:12px;font-size:12.5px;opacity:.92;align-self:flex-end;padding-bottom:6px}
+.ov-stats{display:flex;background:rgba(255,255,255,.16);border-radius:9px;padding:10px 0;margin-top:14px}
+.ov-stat{flex:1;text-align:center}
+.ov-stat .n{font-size:19px;font-weight:700}
+.ov-stat .l{font-size:11px;opacity:.88}
+.ov-stat .n.weak{color:#ffd7d5}.ov-stat .n.basic{color:#ffe9c2}.ov-stat .n.proficient{color:#cdf5e0}
+.ov-summary{margin-top:12px;font-size:12.5px;opacity:.93;line-height:1.65}
+
+.rec-card{border-left:4px solid var(--brand)}
+.rec-head{display:flex;align-items:center;gap:8px;font-size:13px}
+.badge{background:var(--brand);color:#fff;font-size:11px;padding:2px 8px;border-radius:4px}
+.rec-target{margin-top:8px;font-size:13.5px;color:var(--sub)}
+.rec-target b{color:var(--brand)}
+
+.point-card{background:#fff;border-radius:12px;padding:15px;margin-bottom:11px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.point-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.point-name{font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:7px}
+.pill{font-size:10.5px;padding:1px 7px;border-radius:4px;font-weight:400}
+.point-mastery{font-size:18px;font-weight:700}
+.point-cat{font-size:11.5px;color:var(--mute);margin-top:3px}
+.bar{height:8px;background:#eef1f5;border-radius:4px;overflow:hidden;margin-top:10px}
+.bar>i{display:block;height:100%;border-radius:4px;transition:width .45s ease}
+.point-meta{margin-top:8px;font-size:12px;color:var(--sub)}
+.point-desc{margin-top:5px;font-size:11.5px;color:var(--mute)}
+
+/* ---------------- 练习/答题 ---------------- */
+.progress{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:10px}
+.progress>i{display:block;height:100%;background:var(--brand);border-radius:3px;transition:width .3s}
+.question{font-size:15.5px;font-weight:500;margin-bottom:4px}
+.options{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.option{
+  display:flex;align-items:flex-start;gap:11px;padding:12px 14px;
+  border:1px solid var(--line);border-radius:10px;cursor:pointer;transition:all .15s;
+}
+.option .key{
+  width:23px;height:23px;border-radius:50%;background:#f0f2f5;color:var(--sub);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;
+}
+.option.selected{border-color:var(--brand);background:#f0f5ff}
+.option.selected .key{background:var(--brand);color:#fff}
+.option.correct{border-color:var(--proficient);background:#e8f8f0}
+.option.correct .key{background:var(--proficient);color:#fff}
+.option.wrong{border-color:var(--weak);background:#fdeceb}
+.option.wrong .key{background:var(--weak);color:#fff}
+.option.locked{cursor:default}
+.result{margin-top:14px;border-radius:10px;padding:14px 16px}
+.result.ok{background:#e8f8f0;border-left:4px solid var(--proficient)}
+.result.no{background:#fdeceb;border-left:4px solid var(--weak)}
+.result h4{font-size:13.5px;margin-bottom:7px}
+.result .ana{font-size:12.5px;color:#555;line-height:1.7}
+.result .ana b{display:block;font-size:11.5px;color:var(--sub);font-weight:400;margin-bottom:3px}
+
+/* ---------------- 资讯 ---------------- */
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:10px;margin-bottom:4px}
+.chips::-webkit-scrollbar{height:0}
+.chip{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:5px 14px;
+  font-size:12.5px;color:var(--sub);white-space:nowrap;cursor:pointer;font-family:inherit;
+}
+.chip.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.news-item{padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--line)}
+.news-item:last-child{border-bottom:none}
+.news-item:active{background:#fafbfd}
+.news-title{font-size:14px;font-weight:600;margin-bottom:6px}
+.news-meta{font-size:11.5px;color:var(--mute);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tag{font-size:10.5px;padding:1px 7px;border-radius:4px;background:#eef3ff;color:var(--brand)}
+.tag.comp{background:#fff2e8;color:#e6752a}
+.news-body{font-size:12.5px;color:var(--sub);margin-top:7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------------- 排行/我的 ---------------- */
+.rank-row{display:flex;align-items:center;gap:12px;padding:11px 4px;border-bottom:1px solid var(--line)}
+.rank-row:last-child{border-bottom:none}
+.rank-no{
+  width:26px;height:26px;border-radius:50%;background:#f0f2f5;color:var(--sub);
+  display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;flex-shrink:0;
+}
+.rank-no.t1{background:#ffd700;color:#7a5c00}
+.rank-no.t2{background:#d8dce3;color:#555}
+.rank-no.t3{background:#e8b98a;color:#6b3d10}
+.rank-name{flex:1;font-size:13.5px}
+.rank-pts{font-size:14.5px;font-weight:700;color:var(--brand)}
+
+.profile{background:linear-gradient(135deg,#2b5cff,#4a8dff);border-radius:14px;padding:22px 20px;color:#fff;margin-bottom:12px}
+.profile-row{display:flex;align-items:center;gap:14px}
+.avatar{
+  width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;
+}
+.profile .nick{font-size:17px;font-weight:600}
+.profile .uid{font-size:11.5px;opacity:.85}
+.profile-stats{display:flex;gap:0;margin-top:16px;background:rgba(255,255,255,.16);border-radius:9px;padding:10px 0}
+.profile-stats .s{flex:1;text-align:center}
+.profile-stats .s .n{font-size:17px;font-weight:700}
+.profile-stats .s .l{font-size:11px;opacity:.88}
+.menu-item{
+  display:flex;align-items:center;padding:14px 16px;background:#fff;
+  border-bottom:1px solid var(--line);cursor:pointer;font-size:14px;
+}
+.menu-item:last-child{border-bottom:none}
+.menu-item .t{flex:1}
+.menu-item .arrow{color:#ccc;font-size:14px}
+.menu-badge{font-size:10.5px;color:#fff;background:var(--brand);border-radius:4px;padding:1px 7px;margin-right:8px}
+
+/* ---------------- 提示条 ---------------- */
+.banner{
+  background:#fff8e6;border:1px solid #ffe0a3;border-radius:10px;
+  padding:10px 14px;font-size:12px;color:#8a6d1f;margin-bottom:12px;line-height:1.6;
+}
+.banner b{color:#6b530f}
+.toast{
+  position:absolute;left:50%;bottom:80px;transform:translateX(-50%) translateY(16px);
+  background:rgba(30,40,55,.94);color:#fff;padding:9px 18px;border-radius:9px;
+  font-size:12.5px;opacity:0;pointer-events:none;transition:all .25s;z-index:99;
+  max-width:82%;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.hint{
+  max-width:400px;margin:0 auto;font-size:12px;color:#5a6b7d;line-height:1.8;
+  background:#fff;border-radius:12px;padding:14px 16px;
+  box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+.hint b{color:#1f2d3d}
+.wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="phone">
+    <div class="statusbar"><span>9:41</span><span>●●● ⚡</span></div>
+    <div class="navbar" id="navbar">
+      <span class="back" id="backBtn">‹</span>
+      <span id="navTitle">网络安全平台</span>
+    </div>
+    <div class="screen" id="screen"></div>
+    <div class="tabbar" id="tabbar" style="display:none">
+      <button data-tab="news"><span class="ico">📰</span>资讯</button>
+      <button data-tab="quiz"><span class="ico">📝</span>答题</button>
+      <button data-tab="me"><span class="ico">👤</span>我的</button>
+    </div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <div class="hint">
+    <b>这是在线的静态演示</b> —— 不需要后端、不需要数据库，打开就能点。<br>
+    点下面的演示账号按钮即可登录，重点体验「学习诊断报告」：
+    答完题后返回，掌握度的数字会<b>真的重算</b>（用的是和后端一致的算法）。<br>
+    <span style="color:#8a949e">正式版是微信小程序 + Spring Boot + PostgreSQL，功能更完整。</span>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================================
+   数据层 —— 全部内联，不发起任何网络请求
+   ========================================================================= */
+
+const STATE = {
+  user: null,
+  tab: 'login',
+  newsCat: '全部',
+  diagnosis: null,
+  practice: null,
+  paper: null
+};
+
+// ---- 知识点 ----
+const KP = {
+  1: { name:'密码安全',     cat:'身份认证', desc:'口令强度、口令复用、暴力破解与撞库攻击的识别与防护', diff:1 },
+  2: { name:'钓鱼识别',     cat:'社会工程', desc:'仿冒网站、钓鱼短信、冒充客服等社会工程手法的识别',     diff:1 },
+  3: { name:'数据传输安全', cat:'通信安全', desc:'HTTP 与 HTTPS 的差异、加密传输与会话安全',            diff:1 },
+  4: { name:'验证码保护',   cat:'身份认证', desc:'短信/动态验证码的安全边界，以及索要验证码的诈骗特征', diff:1 },
+  5: { name:'SQL 注入',     cat:'Web 安全', desc:'SQL 注入的成因、利用方式与参数化查询等根本性防护',     diff:3 },
+  6: { name:'DDoS 攻击',    cat:'网络攻击', desc:'分布式拒绝服务攻击的原理与影响',                       diff:2 },
+  7: { name:'勒索软件',     cat:'恶意代码', desc:'勒索软件的处置原则与应急响应',                         diff:2 },
+  8: { name:'个人信息保护', cat:'数据安全', desc:'敏感个人信息的收集、存储、使用与最小必要原则',         diff:2 }
+};
+
+// ---- 题目 ----
+const QUIZ = [
+  {id:1,  kp:1, paper:1, q:'以下哪种密码强度最高？', o:['123456','password','MyDog2010','X7#kL9@qZ2!'], a:'D', ana:'长度足够且混合大小写字母、数字、符号的密码强度最高。'},
+  {id:2,  kp:1, paper:1, q:'“撞库攻击”指的是？', o:['用暴力方式猜密码','用已泄露的账号密码去批量尝试登录其他网站','攻击数据库服务器','伪造网站证书'], a:'B', ana:'很多人在不同网站使用同一套密码，一处泄露后攻击者即可批量尝试其他平台。'},
+  {id:3,  kp:2, paper:1, q:'什么是“钓鱼网站”？', o:['提供免费WiFi的网站','伪装成正规网站骗取账号密码的假网站','网速很慢的网站','被黑客攻击过的网站'], a:'B', ana:'钓鱼网站通过仿冒正规页面诱导用户输入账号密码等敏感信息。'},
+  {id:4,  kp:3, paper:1, q:'HTTP 与 HTTPS 的主要区别是什么？', o:['HTTPS 速度更快','HTTPS 对传输数据做了加密','HTTP 更安全','两者没有区别'], a:'B', ana:'HTTPS 在 HTTP 基础上加入 TLS/SSL 加密，防止传输内容被窃听篡改。'},
+  {id:5,  kp:4, paper:1, q:'收到自称“客服”要求提供短信验证码的电话，正确做法是？', o:['直接告知验证码','先告知再挂断','挂断并通过官方渠道核实','把验证码发到群里确认'], a:'C', ana:'短信验证码等同于临时密码，任何人索要都应拒绝，并通过官方渠道核实。'},
+  {id:6,  kp:5, paper:2, q:'SQL 注入攻击的核心原理是？', o:['让数据库服务器宕机','把恶意 SQL 语句拼进输入参数并被数据库执行','破解数据库密码','窃取数据库备份文件'], a:'B', ana:'当程序把用户输入直接拼接进 SQL 语句时，攻击者可构造输入改变原语句语义。'},
+  {id:7,  kp:5, paper:2, q:'防范 SQL 注入最有效的手段是？', o:['过滤单引号','隐藏数据库报错','使用参数化查询（预编译语句）','限制输入长度'], a:'C', ana:'参数化查询把 SQL 结构与数据分离，使输入无法改变语句语义。'},
+  {id:8,  kp:6, paper:2, q:'DDoS 攻击的主要目的是？', o:['窃取用户数据','消耗目标资源使其无法正常提供服务','篡改网页内容','植入病毒'], a:'B', ana:'DDoS 通过大量分布式流量耗尽带宽或连接资源，导致服务不可用。'},
+  {id:9,  kp:7, paper:2, q:'发现电脑中了勒索病毒，最不应该做的是？', o:['立即断网','向安全机构求助','支付赎金','保留现场并上报'], a:'C', ana:'支付赎金不保证能恢复数据，还会助长犯罪，且可能被二次勒索。'},
+  {id:10, kp:8, paper:3, q:'以下哪种做法最容易导致个人信息泄露？', o:['定期修改密码','在公共电脑上勾选“记住密码”','开启二次验证','使用密码管理器'], a:'B', ana:'公共电脑上的“记住密码”会把凭据留在本地，极易被他人获取。'},
+  {id:11, kp:8, paper:3, q:'关于身份证号等敏感信息，正确的做法是？', o:['随意发到微信群','在不明网站填写','仅在必要场合通过官方渠道提供','写进公开简历'], a:'C', ana:'敏感个人信息应遵循最小必要原则，只在可信官方渠道按需提供。'},
+  {id:12, kp:1, paper:3, q:'开启双因素认证（2FA）的作用是？', o:['让密码更复杂','即使密码泄露，攻击者仍难以登录','加快登录速度','替代密码'], a:'B', ana:'双因素认证要求同时提供密码和第二种凭证，显著提高账号安全性。'}
+];
+
+const PAPERS = [
+  {id:1, title:'网络安全基础入门'},
+  {id:2, title:'常见网络攻击与防范'},
+  {id:3, title:'个人信息保护与密码安全'}
+];
+
+const NEWS = [
+  {id:1,title:'2026 年校园网络安全知识竞赛开始报名',cat:'竞赛信息',comp:1,author:'系统管理员',time:'2026-09-30 10:00',body:'为提升全校同学的网络安全意识，现举办网络安全知识竞赛。比赛采用线上答题形式，题目涵盖密码安全、钓鱼识别、数据保护等内容。请有意参赛的同学点击「立即报名」。'},
+  {id:2,title:'网络安全宣传周活动通知',cat:'网络安全活动',comp:0,author:'系统管理员',time:'2026-09-29 09:00',body:'本周为校园网络安全宣传周，将在图书馆报告厅举办三场专题讲座，内容包括《个人信息保护法》解读、常见网络诈骗手法剖析、安全编码实践。欢迎各年级同学参加。'},
+  {id:3,title:'警惕：近期出现仿冒教务系统的钓鱼页面',cat:'安全动态',comp:0,author:'安全预警中心',time:'2026-09-28 16:30',body:'近期监测到有仿冒我校教务系统的钓鱼页面，通过短信链接诱导同学输入学号与密码。请注意：学校不会通过短信索要密码，请勿点击陌生链接。如已填写，请立即修改密码并联系信息中心。'},
+  {id:4,title:'关于近期校园网异常流量的说明',cat:'系统公告',comp:0,author:'系统管理员',time:'2026-09-27 14:00',body:'部分宿舍区出现异常流量，经排查为某软件自动更新所致，非安全事件，已处理完毕，网络现已恢复正常。'},
+  {id:5,title:'常见弱口令自查指南',cat:'安全动态',comp:0,author:'安全预警中心',time:'2026-09-26 11:20',body:'请同学们自查是否使用以下弱口令：123456、password、qwerty、生日、学号后六位等。建议使用 12 位以上、混合大小写字母与符号的密码，并为不同网站设置不同密码。'},
+  {id:6,title:'信息安全 CTF 校内选拔赛报名',cat:'竞赛信息',comp:1,author:'系统管理员',time:'2026-09-25 15:00',body:'面向全校学生的 CTF 校内选拔赛即将开始，赛题方向包括 Web 安全、逆向工程、密码学与杂项。优胜者将代表学校参加省级比赛。请在资讯详情页报名。'}
+];
+
+// ---- 账号（含作答记录）----
+// attempts: 每项 {quizId, resolved, errorCount}
+//   与后端一致：wrong_set 实际是「作答流水」，resolved=true 表示已掌握
+//
+//   ⚠️ 这里的记录必须和 db/seed.sql 里给 student1 造的数据保持一致，
+//      否则静态演示和真实系统会显示出不同的分数，演示时会被质疑。
+//      seed.sql 里是：
+//        quiz 10（以下哪种密码强度最高？）  答错，error_count=2   → 密码安全
+//        quiz 7 （防范 SQL 注入最有效的手段）答错，error_count=1   → SQL 注入
+//        quiz 2 （“撞库攻击”指的是？）      答对，error_count=0   → 密码安全
+//      算出来：密码安全 = 2 题 1 对 → 50.00，SQL 注入 = 1 题 0 对 → 0.00，
+//              平均 25.00。既有对比，又能讲出层次。
+const ACCOUNTS = {
+  student1: {pass:'123456', id:3, nick:'安全小卫士', points:180, role:0, auth:true,
+             attempts:[{quizId:10,resolved:false,errorCount:2},
+                       {quizId:7, resolved:false,errorCount:1},
+                       {quizId:2, resolved:true, errorCount:0}]},
+  student2: {pass:'123456', id:6, nick:'网络萌新',   points:120, role:0, auth:false, attempts:[]},
+  admin:    {pass:'admin123',id:4, nick:'系统管理员', points:0,   role:1, auth:true,
+             attempts:[]}
+};
+
+const LEADERBOARD = [
+  {nick:'密码学小王',pts:300},{nick:'白帽小张',pts:240},{nick:'安全小卫士',pts:180},
+  {nick:'网络萌新',pts:120},{nick:'信安小刘',pts:90},{nick:'系统管理员',pts:0}
+];
+
+/* =========================================================================
+   算法 —— 与后端 KnowledgeMasteryServiceImpl 完全一致
+     mastery = 100 x (0.5*A + 0.3*(1-P) + 0.2*R)
+   ========================================================================= */
+const W_ACC=0.5, W_ERR=0.3, W_REC=0.2, RECENT=5, MIN_SAMPLE=2, ERR_SCALE=2.0;
+const LEVEL={WEAK:{t:'薄弱',c:'#e54d42',bg:'#fdeceb'},BASIC:{t:'合格',c:'#f0a020',bg:'#fdf5e6'},PROFICIENT:{t:'熟练',c:'#19be6b',bg:'#e8f8f0'}};
+const r2=v=>Math.round(v*100)/100;
+const levelOf=m=>m<60?'WEAK':m<75?'BASIC':'PROFICIENT';
+
+function calcMastery(attempts, correct, errors, recent){
+  const A = attempts===0?0:correct/attempts;
+  if(attempts<MIN_SAMPLE) return {mastery:r2(100*A), accuracy:r2(A*10000)/10000, recentAccuracy:null, level:levelOf(100*A)};
+  const P = Math.min(1, errors/(ERR_SCALE*attempts));
+  let R=null;
+  if(recent && recent.length){const n=Math.min(RECENT,recent.length);let ok=0;for(let i=0;i<n;i++)if(recent[i])ok++;R=ok/n;}
+  const eR = R===null?A:R;
+  const m = Math.max(0,Math.min(100,100*(W_ACC*A+W_ERR*(1-P)+W_REC*eR)));
+  return {mastery:r2(m), accuracy:r2(A*10000)/10000, recentAccuracy:R===null?null:r2(R*10000)/10000, level:levelOf(m)};
+}
+
+// 把作答记录聚合成「每个知识点」的掌握度
+function buildDiagnosis(acc){
+  const byKp = {};
+  acc.attempts.forEach(a=>{
+    const quiz = QUIZ.find(q=>q.id===a.quizId);
+    if(!quiz) return;
+    const b = byKp[quiz.kp] || (byKp[quiz.kp]={attempts:0,correct:0,errors:0,recent:[]});
+    b.attempts++; if(a.resolved)b.correct++; b.errors+=a.errorCount; b.recent.push(!!a.resolved);
+  });
+  const items = Object.keys(byKp).map(k=>{
+    const b=byKp[k], m=calcMastery(b.attempts,b.correct,b.errors,b.recent);
+    return {kpId:Number(k), ...KP[k], mastery:m.mastery, level:m.level,
+            attemptCount:b.attempts, correctCount:b.correct, wrongCount:b.attempts-b.correct,
+            accuracy:m.accuracy, recentAccuracy:m.recentAccuracy};
+  }).sort((a,b)=>a.mastery-b.mastery);
+
+  const avg = items.length ? r2(items.reduce((s,i)=>s+i.mastery,0)/items.length) : 0;
+  const weak = items.filter(i=>i.level==='WEAK').length;
+  const basic = items.filter(i=>i.level==='BASIC').length;
+  const prof = items.filter(i=>i.level==='PROFICIENT').length;
+  return {items, overview:{
+    pointCount:items.length, averageMastery:avg, weakCount:weak, basicCount:basic, proficientCount:prof,
+    overallLevel:levelOf(avg),
+    summary: items.length
+      ? `整体掌握情况${avg<60?'较薄弱':avg<75?'中等':'良好'}，覆盖 ${items.length} 个知识点，其中 ${weak} 个低于 60 分，建议优先针对薄弱知识点做专项练习。`
+      : '还没有答题记录，先去「答题」完成一次作业包，系统就能生成你的知识点诊断报告。'
+  }};
+}
+
+/* =========================================================================
+   渲染
+   ========================================================================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+let toastTimer=null;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.className='toast show'; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.className='toast',1800); }
+
+function setNav(title, showBack){
+  $('#navTitle').textContent = title;
+  $('#backBtn').style.display = showBack ? 'block' : 'none';
+}
+function setTab(active){
+  $('#tabbar').style.display = active ? 'flex' : 'none';
+  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.toggle('active', b.dataset.tab===active));
+}
+function render(html){ $('#screen').innerHTML = html; $('#screen').scrollTop = 0; }
+
+/* ------------------------------ 登录 ------------------------------ */
+function viewLogin(){
+  STATE.tab='login'; setNav('网络安全平台', false); setTab(null);
+  render(`
+    <div class="login">
+      <h1>网络安全科普答题平台</h1>
+      <div class="sub">校园网络安全知识学习与智能诊断系统</div>
+      <div class="field"><label>账号</label><input id="u" placeholder="请输入账号" value="student1"></div>
+      <div class="field"><label>密码</label><input id="p" type="password" placeholder="请输入密码" value="123456"></div>
+      <button class="btn block" onclick="doLogin()">登 录</button>
+      <div class="demo-accounts">
+        <p>演示账号（点击自动填入）</p>
+        <div class="demo-row">
+          <button onclick="fillLogin('student1')"><b>student1</b>学生·有错题</button>
+          <button onclick="fillLogin('admin')"><b>admin</b>管理员</button>
+          <button onclick="fillLogin('student2')"><b>student2</b>未实名</button>
+        </div>
+      </div>
+    </div>`);
+}
+function fillLogin(name){ $('#u').value=name; $('#p').value=ACCOUNTS[name].pass; }
+function doLogin(){
+  const u=$('#u').value.trim(), p=$('#p').value.trim();
+  const acc = ACCOUNTS[u];
+  if(!acc || acc.pass!==p){ toast('账号或密码错误（试试 student1 / 123456）'); return; }
+  if(!acc.auth){
+    toast('该账号未实名，被实名门禁拦截');
+    return;
+  }
+  STATE.user = {...acc, username:u};
+  viewNews();
+  toast('登录成功');
+}
+
+/* ------------------------------ 资讯 ------------------------------ */
+const CATS=['全部','竞赛信息','安全动态','系统公告','网络安全活动'];
+function viewNews(){
+  STATE.tab='news'; setNav('网络安全平台', false); setTab('news');
+  const list = STATE.newsCat==='全部' ? NEWS : NEWS.filter(n=>n.cat===STATE.newsCat);
+  render(`
+    <div class="banner">当前登录：<b>${esc(STATE.user.nick)}</b>（学生 · ${STATE.user.points} 分）</div>
+    <div class="chips">${CATS.map(c=>`<button class="chip ${c===STATE.newsCat?'active':''}" onclick="setCat('${c}')">${c}</button>`).join('')}</div>
+    <div class="card nopad">${
+      list.length ? list.map(n=>`
+        <div class="news-item" onclick="viewNewsDetail(${n.id})">
+          <div class="news-title">${esc(n.title)}</div>
+          <div class="news-meta">
+            <span class="tag ${n.comp?'comp':''}">${esc(n.cat)}</span>
+            <span>${esc(n.author)}</span><span>${esc(n.time)}</span>
+          </div>
+          <div class="news-body">${esc(n.body)}</div>
+        </div>`).join('') : '<div class="empty"><b>该分类下暂无资讯</b></div>'
+    }</div>`);
+}
+function setCat(c){ STATE.newsCat=c; viewNews(); }
+
+let newsBack=null;
+function viewNewsDetail(id){
+  const n=NEWS.find(x=>x.id===id);
+  newsBack = viewNews;
+  setNav('资讯详情', true); setTab(null);
+  const canReg = n.cat==='竞赛信息'||n.cat==='网络安全活动';
+  render(`
+    <div class="card">
+      <div style="font-size:16px;font-weight:600;margin-bottom:8px">${esc(n.title)}</div>
+      <div class="news-meta" style="margin-bottom:14px">
+        <span class="tag ${n.comp?'comp':''}">${esc(n.cat)}</span>
+        <span>${esc(n.author)}</span><span>${esc(n.time)}</span>
+      </div>
+      <div style="font-size:13.5px;line-height:1.85;color:#444">${esc(n.body)}</div>
+      ${canReg?`<div style="margin-top:18px"><button class="btn" onclick="signUp()">立即报名</button></div>`:''}
+    </div>`);
+}
+function signUp(){ toast('报名成功（演示）'); }
+
+/* ------------------------------ 智能诊断 ------------------------------ */
+function viewDiagnosis(){
+  STATE.tab='me'; setNav('学习诊断报告', false); setTab('me');
+  const d = buildDiagnosis(STATE.user);
+  STATE.diagnosis = d;
+
+  if(!d.items.length){
+    render(`<div class="empty"><b>还没有诊断数据</b>先去「答题」完成一次作业包，系统就会自动分析知识点掌握情况。</div>`);
+    return;
+  }
+
+  const o=d.overview, weakest=d.items[0];
+  render(`
+    <div class="overview">
+      <div class="ov-title">学习诊断报告</div>
+      <div style="display:flex;align-items:flex-end">
+        <div class="ov-score"><span class="n">${o.averageMastery.toFixed(2)}</span><span class="u">分</span></div>
+        <div class="ov-score-desc">综合掌握度<br><span style="font-size:11px;opacity:.78">已覆盖 ${o.pointCount} 个知识点</span></div>
+      </div>
+      <div class="ov-stats">
+        <div class="ov-stat"><div class="n weak">${o.weakCount}</div><div class="l">薄弱</div></div>
+        <div class="ov-stat"><div class="n basic">${o.basicCount}</div><div class="l">合格</div></div>
+        <div class="ov-stat"><div class="n proficient">${o.proficientCount}</div><div class="l">熟练</div></div>
+      </div>
+      <div class="ov-summary">${esc(o.summary)}</div>
+    </div>
+
+    <div class="card rec-card">
+      <div class="rec-head"><span class="badge">智能推荐</span><span>最需要加强的知识点</span></div>
+      <div class="rec-target">当前薄弱知识点：<b>${esc(weakest.name)}</b>（掌握度 ${weakest.mastery.toFixed(2)}）</div>
+      <div class="point-desc" style="margin-top:8px;font-size:12px">系统会从该知识点中挑选你尚未答对的题组成专项练习，答完立即更新掌握度。</div>
+      <div style="margin-top:12px"><button class="btn" onclick="startPractice(${weakest.kpId})">开始专项练习</button></div>
+    </div>
+
+    <div style="font-size:13.5px;font-weight:600;margin:16px 0 10px 4px">知识点掌握度明细（由弱到强）</div>
+    ${d.items.map(it=>{
+      const lv=LEVEL[it.level], acc=it.accuracy==null?null:Math.round(it.accuracy*100);
+      return `
+      <div class="point-card">
+        <div class="point-head">
+          <div>
+            <div class="point-name">${esc(it.name)}<span class="pill" style="color:${lv.c};background:${lv.bg}">${lv.t}</span></div>
+            <div class="point-cat">${esc(it.cat)}</div>
+          </div>
+          <div class="point-mastery" style="color:${lv.c}">${it.mastery.toFixed(2)}</div>
+        </div>
+        <div class="bar"><i style="width:${Math.max(2,Math.min(100,it.mastery))}%;background:${lv.c}"></i></div>
+        <div class="point-meta">${it.attemptCount>0
+          ? `已作答 ${it.attemptCount} 题 · 正确率 ${acc}% · 近期正确率 ${it.recentAccuracy==null?'样本不足':Math.round(it.recentAccuracy*100)+'%'}`
+          : '尚未练习该知识点'}</div>
+        <div class="point-desc">${esc(it.desc)}</div>
+        <div style="margin-top:11px"><button class="btn outline sm" onclick="startPractice(${it.kpId})">针对练习</button></div>
+      </div>`;
+    }).join('')}
+
+    <div style="text-align:center;margin-top:18px">
+      <button class="btn outline sm" onclick="viewRank()">查看积分排行榜</button>
+    </div>`);
+}
+
+/* ------------------------------ 专项练习 ------------------------------ */
+function startPractice(kpId){
+  // 优先推「该知识点下还没答对」的题，全答对了就推该知识点全部题（巩固）
+  const answered = new Set(STATE.user.attempts.filter(a=>a.resolved).map(a=>a.quizId));
+  let pool = QUIZ.filter(q=>q.kp===kpId && !answered.has(q.id));
+  if(!pool.length) pool = QUIZ.filter(q=>q.kp===kpId);
+  if(!pool.length){ toast('该知识点暂无题目'); return; }
+
+  STATE.practice = {kpId, kpName:KP[kpId].name, list:pool.slice(0,5), i:0, sel:null, done:false, correct:0, wrong:0, from:'diagnosis'};
+  renderPractice();
+}
+
+function renderPractice(){
+  const p=STATE.practice;
+  setNav(p.from==='diagnosis'?'专项练习':'作业包答题', true); setTab(null);
+
+  if(p.i>=p.list.length){
+    const total=p.correct+p.wrong, rate=total?Math.round(p.correct*100/total):0;
+    render(`
+      <div class="card" style="text-align:center;padding:34px 20px">
+        <div style="font-size:16px;font-weight:600">练习完成</div>
+        <div style="margin-top:16px"><span style="font-size:46px;font-weight:700;color:var(--brand)">${p.correct}</span><span style="font-size:16px;color:var(--mute)"> / ${total}</span></div>
+        <div style="font-size:12px;color:var(--mute);margin-top:4px">本次正确率 ${rate}%</div>
+        <div class="ov-stats" style="background:#f7f9fc;margin-top:20px">
+          <div class="ov-stat"><div class="n" style="color:var(--proficient)">${p.correct}</div><div class="l" style="color:var(--mute)">答对</div></div>
+          <div class="ov-stat"><div class="n" style="color:var(--weak)">${p.wrong}</div><div class="l" style="color:var(--mute)">答错</div></div>
+        </div>
+        <div style="margin-top:20px;font-size:12.5px;color:var(--mute);line-height:1.7">
+          掌握度已实时更新<br>返回诊断页可以看到最新的数字
+        </div>
+        <div style="margin-top:16px"><button class="btn" onclick="backFromPractice()">返回诊断报告</button></div>
+      </div>`);
+    return;
+  }
+
+  const q=p.list[p.i], letters=['A','B','C','D'];
+  render(`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:600;font-size:13.5px">${p.from==='diagnosis'?'知识点专项练习':'作业包答题'}</div>
+          <div style="font-size:11.5px;color:var(--brand);margin-top:2px">${esc(p.kpName||'')}</div>
+        </div>
+        <div style="color:var(--mute);font-size:13px">第 ${p.i+1} / ${p.list.length} 题</div>
+      </div>
+      <div class="progress"><i style="width:${(p.i+1)/p.list.length*100}%"></i></div>
+    </div>
+    <div class="card">
+      <div class="question">${esc(q.q)}</div>
+      <div class="options">
+        ${q.o.map((text,idx)=>{
+          const k=letters[idx];
+          let cls='option';
+          if(p.done && k===q.a) cls+=' correct locked';
+          else if(p.done && k===p.sel) cls+=' wrong locked';
+          else if(!p.done && k===p.sel) cls+=' selected';
+          if(p.done) cls+=' locked';
+          return `<div class="${cls}" ${p.done?'':`onclick="pickOption('${k}')"`}>
+                    <span class="key">${k}</span><span>${esc(text)}</span></div>`;
+        }).join('')}
+      </div>
+      ${p.done?`
+        <div class="result ${p.sel===q.a?'ok':'no'}">
+          <h4>${p.sel===q.a?'✅ 回答正确':'❌ 回答错误，正确答案是 '+q.a}</h4>
+          <div class="ana"><b>解析</b>${esc(q.ana)}</div>
+        </div>`:''}
+      <div style="margin-top:16px;display:flex;gap:10px">
+        ${p.done
+          ? `<button class="btn" onclick="nextQuestion()">${p.i+1<p.list.length?'下一题':'完成练习'}</button>`
+          : `<button class="btn" onclick="submitAnswer()">提交答案</button>`}
+        <button class="btn outline" onclick="backFromPractice()">返回</button>
+      </div>
+    </div>`);
+}
+
+function pickOption(k){
+  if(!STATE.practice || STATE.practice.done) return;
+  STATE.practice.sel=k; renderPractice();
+}
+
+function submitAnswer(){
+  const p=STATE.practice;
+  if(!p.sel){ toast('请先选择一个答案'); return; }
+  const q=p.list[p.i];
+  const correct = p.sel===q.a;
+
+  // 关键：把这次作答写进 attempts —— 与后端「首次作答无论对错都落一行」一致。
+  // 这就是为什么返回诊断页时掌握度数字会变。
+  const ex = STATE.user.attempts.find(a=>a.quizId===q.id);
+  if(!ex){
+    STATE.user.attempts.push({quizId:q.id, resolved:correct, errorCount:correct?0:1});
+  }else if(correct){
+    ex.resolved=true;
+  }else{
+    ex.resolved=false; ex.errorCount=(ex.errorCount||0)+1;
+  }
+
+  p.done=true;
+  if(correct)p.correct++; else p.wrong++;
+  renderPractice();
+}
+
+function nextQuestion(){
+  const p=STATE.practice;
+  p.i++; p.sel=null; p.done=false;
+  renderPractice();
+}
+
+function backFromPractice(){
+  if(STATE.practice && STATE.practice.from==='paper'){ viewPapers(); }
+  else { viewDiagnosis(); }
+}
+
+/* ------------------------------ 答题（作业包） ------------------------------ */
+function viewPapers(){
+  STATE.tab='quiz'; setNav('答题', false); setTab('quiz');
+  render(`
+    <div class="banner">选择一个作业包开始答题。答完后积分 +20，并自动更新知识点掌握度。</div>
+    ${PAPERS.map(p=>{
+      const n=QUIZ.filter(q=>q.paper===p.id).length;
+      return `<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div>
+          <div style="font-weight:600;font-size:14.5px">${esc(p.title)}</div>
+          <div style="font-size:11.5px;color:var(--mute);margin-top:3px">共 ${n} 题</div>
+        </div>
+        <button class="btn outline sm" onclick="openPaper(${p.id})">开始答题</button>
+      </div>`;
+    }).join('')}`);
+}
+
+function openPaper(paperId){
+  const list=QUIZ.filter(q=>q.paper===paperId);
+  const paper=PAPERS.find(p=>p.id===paperId);
+  STATE.practice={kpId:null, kpName:paper.title, list, i:0, sel:null, done:false, correct:0, wrong:0, from:'paper'};
+  renderPractice();
+}
+
+/* ------------------------------ 排行榜 ------------------------------ */
+function viewRank(){
+  STATE.tab='me'; setNav('积分排行榜', true); setTab(null);
+  render(`<div class="card" style="padding:6px 14px">${
+    LEADERBOARD.map((r,i)=>`
+      <div class="rank-row">
+        <div class="rank-no ${i===0?'t1':i===1?'t2':i===2?'t3':''}">${i+1}</div>
+        <div class="rank-name" ${r.nick===STATE.user.nick?'style="font-weight:700;color:#2b5cff"':''}>${esc(r.nick)}${r.nick===STATE.user.nick?'（我）':''}</div>
+        <div class="rank-pts">${r.pts}</div>
+      </div>`).join('')
+  }</div>`);
+}
+
+/* ------------------------------ 我的 ------------------------------ */
+function viewMe(){
+  STATE.tab='me'; setNav('我的', false); setTab('me');
+  const u=STATE.user;
+  render(`
+    <div class="profile">
+      <div class="profile-row">
+        <div class="avatar">${esc(u.nick.charAt(0))}</div>
+        <div>
+          <div class="nick">${esc(u.nick)}</div>
+          <div class="uid">ID: ${u.id} · ${u.role===1?'管理员':'学生'}</div>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="s"><div class="n">${u.points}</div><div class="l">积分</div></div>
+        <div class="s"><div class="n">${u.auth?'已认证':'未认证'}</div><div class="l">认证状态</div></div>
+      </div>
+    </div>
+    <div class="card nopad">
+      <div class="menu-item" onclick="viewDiagnosis()">
+        <span class="t">学习诊断报告</span><span class="menu-badge">智能</span><span class="arrow">›</span>
+      </div>
+      <div class="menu-item" onclick="viewRank()"><span class="t">排行榜</span><span class="arrow">›</span></div>
+      <div class="menu-item" onclick="toast('错题本（演示版未实现，正式版有）')"><span class="t">错题本</span><span class="arrow">›</span></div>
+      <div class="menu-item" onclick="toast('实名认证（演示版已简化）')"><span class="t">实名认证</span><span class="arrow">›</span></div>
+      <div class="menu-item" onclick="toast('一键举报（演示版未实现，正式版有）')"><span class="t">一键举报</span><span class="arrow">›</span></div>
+      <div class="menu-item" onclick="logout()"><span class="t" style="color:#e54d42">退出登录</span><span class="arrow">›</span></div>
+    </div>
+    <div style="text-align:center;font-size:11.5px;color:var(--mute);margin-top:16px;line-height:1.8">
+      静态演示版 · 数据为内置示例<br>正式版为微信小程序 + Spring Boot + PostgreSQL
+    </div>`);
+}
+
+function logout(){ STATE.user=null; STATE.newsCat='全部'; viewLogin(); }
+
+/* ------------------------------ 事件绑定 ------------------------------ */
+$('#backBtn').addEventListener('click', ()=>{
+  if(STATE.tab==='login') return;
+  if(newsBack && $('#navTitle').textContent==='资讯详情'){ newsBack(); newsBack=null; return; }
+  if($('#navTitle').textContent==='积分排行榜'){ viewMe(); return; }
+  if(STATE.practice && !STATE.practice.done===false){ backFromPractice(); return; }
+  viewMe();
+});
+document.querySelectorAll('.tabbar button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    if(b.dataset.tab==='news') viewNews();
+    else if(b.dataset.tab==='quiz') viewPapers();
+    else viewMe();
+  });
+});
+
+viewLogin();
+</script>
+</body>
+</html>
