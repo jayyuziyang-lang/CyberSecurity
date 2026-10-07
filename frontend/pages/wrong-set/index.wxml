@@ -1,0 +1,15 @@
+<view class="page">
+  <view wx:if="{{wrongList.length === 0}}" class="empty">
+    暂无未解决错题
+  </view>
+
+  <view wx:for="{{wrongList}}" wx:key="wrongId" class="item">
+    <view class="question">{{item.question}}</view>
+    <view class="options">
+      <button class="opt-btn" data-id="{{item.wrongId}}" data-ans="A" bindtap="redoAnswer">A. {{item.optionA}}</button>
+      <button class="opt-btn" data-id="{{item.wrongId}}" data-ans="B" bindtap="redoAnswer">B. {{item.optionB}}</button>
+      <button class="opt-btn" data-id="{{item.wrongId}}" data-ans="C" bindtap="redoAnswer">C. {{item.optionC}}</button>
+      <button class="opt-btn" data-id="{{item.wrongId}}" data-ans="D" bindtap="redoAnswer">D. {{item.optionD}}</button>
+    </view>
+  </view>
+</view>

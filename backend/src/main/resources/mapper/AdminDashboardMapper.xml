@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cybersec.repository.AdminDashboardMapper">
+
+    <select id="selectRegistrationDetails" resultType="com.example.cybersec.dto.RegistrationFlatRow">
+        SELECT r.id AS registrationId,
+               n.id AS newsId,
+               n.title AS newsTitle,
+               u.id AS userId,
+               u.username AS username,
+               u.nickname AS nickname,
+               r.create_time AS registrationTime
+        FROM registration r
+        LEFT JOIN news n ON r.news_id = n.id
+        LEFT JOIN "user" u ON r.user_id = u.id
+        ORDER BY n.id, r.create_time DESC
+    </select>
+
+    <select id="selectStudentOverview" resultType="com.example.cybersec.dto.StudentOverviewVO">
+        SELECT COUNT(*)::int AS totalStudents,
+               COALESCE(ROUND(AVG(COALESCE(points, 0))::numeric, 2), 0) AS averageScore
+        FROM "user"
+        WHERE role = 0
+    </select>
+
+    <select id="selectTopWrongQuizzes" resultType="com.example.cybersec.dto.TopWrongQuizVO">
+        SELECT ws.quiz_id AS quizId,
+               q.question AS question,
+               COUNT(*)::int AS wrongCount,
+               COALESCE(ROUND((COUNT(*) * 100.0 / NULLIF((SELECT COUNT(*) FROM wrong_set), 0))::numeric, 2), 0) AS wrongRate
+        FROM wrong_set ws
+        LEFT JOIN quiz q ON ws.quiz_id = q.id
+        GROUP BY ws.quiz_id, q.question
+        ORDER BY wrongCount DESC
+        LIMIT 5
+    </select>
+
+</mapper>

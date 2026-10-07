@@ -1,0 +1,122 @@
+/* pages/me/me.wxss */
+/* pages/me/me.wxss */
+.container {
+  background-color: #f4f7f9; 
+  min-height: 100vh;
+  /* 关键点1：强制使用块级布局，避免 flex 异常 */
+  display: block !important; 
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 1. 顶部蓝色主卡片 */
+.user-main-card {
+  background-color: #1296db;
+  /* 关键点2：增加顶部高度避开状态栏 */
+  padding: 130rpx 40rpx 50rpx; 
+  display: flex;
+  align-items: center;
+  color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.avatar {
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255,255,255,0.4);
+}
+
+.user-info {
+  margin-left: 30rpx;
+  flex: 1;
+}
+
+.nickname {
+  font-size: 38rpx;
+  font-weight: bold;
+}
+
+.user-id {
+  font-size: 24rpx;
+  opacity: 0.8;
+  margin-top: 5rpx;
+}
+
+/* 积分栏 */
+.status-info-row {
+  display: flex;
+  align-items: center;
+  margin-top: 25rpx;
+  padding-top: 15rpx;
+  border-top: 1rpx solid rgba(255,255,255,0.2);
+}
+
+.status-item {
+  display: flex;
+  align-items: baseline;
+}
+
+.status-num {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.status-label {
+  font-size: 24rpx;
+  margin-left: 10rpx;
+}
+
+.status-divider {
+  width: 6rpx;
+  height: 6rpx;
+  background-color: rgba(255,255,255,0.4);
+  border-radius: 50%;
+  margin: 0 20rpx;
+}
+
+/* 2. 下方等宽功能列表 */
+.full-menu-list {
+  width: 100%;
+  background-color: #fff;
+  /* 关键点3：确保没有外边距，贴紧上方卡片 */
+  margin-top: 0 !important; 
+  padding-top: 0 !important;
+  display: block;
+}
+
+.full-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 40rpx 40rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+  box-sizing: border-box;
+}
+
+.menu-icon {
+  font-size: 36rpx;
+}
+
+.menu-text {
+  flex: 1;
+  font-size: 32rpx;
+  color: #333;
+  margin-left: 20rpx;
+}
+
+/* 智能化功能标识 */
+.menu-badge {
+  font-size: 20rpx;
+  color: #ffffff;
+  background: #2b5cff;
+  border-radius: 6rpx;
+  padding: 2rpx 12rpx;
+  margin-right: 16rpx;
+}
+
+.arrow {
+  color: #ccc;
+  font-size: 28rpx;
+}

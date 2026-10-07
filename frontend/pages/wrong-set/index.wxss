@@ -1,0 +1,36 @@
+.page {
+  min-height: 100vh;
+  background: #f6f8fc;
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+.empty {
+  margin-top: 80rpx;
+  text-align: center;
+  color: #666;
+}
+
+.item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+}
+
+.question {
+  font-size: 30rpx;
+  color: #222;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.opt-btn {
+  width: 100%;
+  margin-bottom: 12rpx;
+  text-align: left;
+  background: #f4f7ff;
+  color: #1d2b53;
+  font-size: 28rpx;
+}

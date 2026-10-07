@@ -1,0 +1,27 @@
+<view class="container">
+  <image
+    src="{{newsInfo.coverUrl}}"
+    mode="widthFix"
+    class="cover"
+  ></image>
+
+  <view class="content-wrap">
+    <view class="title">{{newsInfo.title}}</view>
+    <view class="meta">
+      <view class="author">{{newsInfo.author || '官方发布'}}</view>
+      <view class="time">{{newsInfo.createTime}}</view>
+    </view>
+    <view class="content-text">
+      <text user-select="true">{{newsInfo.content}}</text>
+    </view>
+  </view>
+
+  <button
+    wx:if="{{canRegister}}"
+    class="register-btn"
+    type="primary"
+    bindtap="submitRegistration"
+  >
+    立即报名
+  </button>
+</view>

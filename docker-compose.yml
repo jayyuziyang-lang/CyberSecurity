@@ -1,0 +1,82 @@
+# =============================================================================
+#  docker-compose.yml —— 一条命令起「数据库 + 后端」
+# -----------------------------------------------------------------------------
+#  适合：本机有 Docker、想在接近生产的环境里跑一遍，或者部署到自己的服务器。
+#
+#  用法（在项目根目录）：
+#      docker compose up -d                  # 启动
+#      docker compose logs -f backend        # 看后端日志
+#      docker compose down                   # 停止
+#      docker compose down -v                # 停止并清空数据库数据
+#
+#  首次启动后需要导入表结构和演示数据（只做一次）：
+#      docker compose exec -T db psql -U postgres -d cybersec_db < db/schema.sql
+#      docker compose exec -T db psql -U postgres -d cybersec_db < db/seed.sql
+#
+#  然后浏览器打开 http://localhost:8081/ （如果你也起了 web-demo）
+# =============================================================================
+
+services:
+
+  # ---------------------------- PostgreSQL ----------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: cybersec-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "123456"
+      POSTGRES_DB: cybersec_db
+      # 中文数据必须保证 UTF8，否则题库/资讯写进去会报编码错误
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+      TZ: Asia/Shanghai
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cybersec_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ------------------------------ 后端 ------------------------------
+  backend:
+    build:
+      context: ./backend
+    container_name: cybersec-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy      # 等数据库真的能连了再起后端
+    environment:
+      # 容器内用服务名 db 访问数据库，不是 localhost
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cybersec_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: "123456"
+      SQL_LOG: "none"                    # 关掉 SQL 日志，太吵
+      TZ: Asia/Shanghai
+    ports:
+      - "8080:8080"
+
+  # --------------------------- 网页演示版 ---------------------------
+  # 起这个才能让浏览器访问演示页面（它会把 /api 反向代理到 backend）
+  web:
+    image: node:20-alpine
+    container_name: cybersec-web
+    restart: unless-stopped
+    depends_on:
+      - backend
+    working_dir: /app
+    volumes:
+      - ./web-demo:/app
+    environment:
+      # 容器里通过服务名访问后端
+      BACKEND_HOST: backend
+      BACKEND_PORT: "8080"
+    command: ["node", "serve_demo.js", "8081", "8080"]
+    ports:
+      - "8081:8081"
+
+volumes:
+  pgdata:

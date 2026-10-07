@@ -1,0 +1,108 @@
+.page {
+  min-height: 100vh;
+  background: #f4f7fb;
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+.loading,
+.empty {
+  margin-top: 80rpx;
+  text-align: center;
+  color: #8a94a6;
+  font-size: 28rpx;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 18rpx;
+  padding: 22rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 8rpx 24rpx rgba(13, 38, 76, 0.06);
+}
+
+.card-head {
+  display: flex;
+  gap: 16rpx;
+}
+
+.title {
+  flex: 1;
+  color: #1a2742;
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.count {
+  color: #cc3a3a;
+  background: #ffe8e8;
+  border-radius: 999rpx;
+  padding: 6rpx 14rpx;
+  font-size: 22rpx;
+  align-self: flex-start;
+}
+
+.hint {
+  margin-top: 14rpx;
+  color: #78839a;
+  font-size: 24rpx;
+}
+
+.detail {
+  margin-top: 18rpx;
+  border-top: 1rpx solid #edf1f7;
+  padding-top: 16rpx;
+}
+
+.opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10rpx;
+  background: #f8faff;
+  color: #304164;
+  border-radius: 12rpx;
+  padding: 14rpx;
+  margin-bottom: 10rpx;
+  line-height: 1.5;
+}
+
+.opt.correct {
+  background: #e8fff1;
+  color: #126f43;
+  border: 1rpx solid #8ddbb5;
+}
+
+.opt-key {
+  font-weight: 700;
+}
+
+.opt-text {
+  flex: 1;
+}
+
+.tag {
+  color: #0f7a47;
+  font-size: 22rpx;
+}
+
+.answer-row {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #0f7a47;
+  font-weight: 600;
+}
+
+.analysis-title {
+  margin-top: 14rpx;
+  font-size: 26rpx;
+  color: #1a2742;
+  font-weight: 600;
+}
+
+.analysis {
+  margin-top: 8rpx;
+  color: #5d6880;
+  font-size: 26rpx;
+  line-height: 1.7;
+}

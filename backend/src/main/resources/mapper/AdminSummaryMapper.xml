@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cybersec.repository.AdminSummaryMapper">
+
+    <select id="selectActivityCompetitionSummary" resultType="com.example.cybersec.dto.AdminSummaryRow">
+        <![CDATA[
+        SELECT n.id AS newsId,
+               n.title AS newsTitle,
+               n.category AS category,
+               COUNT(u.id)::int AS registrationCount,
+               COALESCE(
+                   string_agg(DISTINCT COALESCE(u.nickname, u.username), ',' ORDER BY COALESCE(u.nickname, u.username)),
+                   ''
+               ) AS studentNicknames
+        FROM news n
+        LEFT JOIN registration r ON n.id = r.news_id
+        LEFT JOIN "user" u ON r.user_id = u.id AND u.role = 0
+        WHERE n.is_competition = TRUE
+           OR n.category = '网络安全活动'
+        GROUP BY n.id, n.title, n.category
+        ORDER BY n.id DESC
+        ]]>
+    </select>
+
+</mapper>

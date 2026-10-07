@@ -1,0 +1,86 @@
+<view class="page">
+
+  <!-- 整体概览 -->
+  <view class="overview-card" wx:if="{{overview}}">
+    <view class="ov-title">学习诊断报告</view>
+    <view class="ov-score-row">
+      <view class="ov-score">
+        <text class="ov-score-num">{{overview.averageMastery}}</text>
+        <text class="ov-score-unit">分</text>
+      </view>
+      <view class="ov-score-desc">
+        <text class="ov-score-label">综合掌握度</text>
+        <text class="ov-point-count">已覆盖 {{overview.pointCount}} 个知识点</text>
+      </view>
+    </view>
+
+    <view class="ov-stat-row">
+      <view class="ov-stat">
+        <text class="ov-stat-num weak">{{overview.weakCount}}</text>
+        <text class="ov-stat-label">薄弱</text>
+      </view>
+      <view class="ov-stat">
+        <text class="ov-stat-num basic">{{overview.basicCount}}</text>
+        <text class="ov-stat-label">合格</text>
+      </view>
+      <view class="ov-stat">
+        <text class="ov-stat-num proficient">{{overview.proficientCount}}</text>
+        <text class="ov-stat-label">熟练</text>
+      </view>
+    </view>
+
+    <view class="ov-summary">{{overview.summary}}</view>
+  </view>
+
+  <!-- 智能化推荐 -->
+  <view class="section-card recommend-card" wx:if="{{recommend && recommend.count > 0}}">
+    <view class="rec-head">
+      <text class="rec-badge">智能推荐</text>
+      <text class="rec-strategy">{{recommend.strategy}}</text>
+    </view>
+    <view class="rec-target" wx:if="{{recommend.knowledgePointName}}">
+      当前薄弱知识点：<text class="rec-point-name">{{recommend.knowledgePointName}}</text>
+    </view>
+    <view class="rec-desc">系统已为你挑选 {{recommend.count}} 道针对性练习，答完会自动更新掌握度。</view>
+    <view class="rec-btn" bindtap="startRecommend">开始专项练习</view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-card" wx:if="{{!loading && !hasData}}">
+    <text class="empty-title">还没有诊断数据</text>
+    <text class="empty-desc">完成一次作业包答题后，系统会自动分析你的知识点掌握情况并生成诊断报告。</text>
+  </view>
+
+  <!-- 知识点掌握度明细 -->
+  <view class="section-title" wx:if="{{hasData}}">知识点掌握度（由弱到强）</view>
+
+  <view class="point-card" wx:for="{{items}}" wx:key="knowledgePointId">
+    <view class="point-head">
+      <view class="point-name-row">
+        <text class="point-name">{{item.name}}</text>
+        <text class="point-level" style="color:{{item.levelColor}};background:{{item.levelBg}}">{{item.levelText}}</text>
+      </view>
+      <text class="point-mastery" style="color:{{item.levelColor}}">{{item.masteryText}}</text>
+    </view>
+
+    <view class="point-category" wx:if="{{item.category}}">{{item.category}}</view>
+
+    <view class="bar-track">
+      <view class="bar-fill" style="width:{{item.barWidth}}%;background:{{item.levelColor}}"></view>
+    </view>
+
+    <view class="point-meta">
+      <text wx:if="{{item.hasAttempt}}">已作答 {{item.attemptCount}} 题 · 正确率 {{item.accuracyText}}</text>
+      <text wx:else>尚未练习该知识点</text>
+    </view>
+
+    <view class="point-desc" wx:if="{{item.description}}">{{item.description}}</view>
+
+    <view class="point-action" bindtap="startPointPractice" data-id="{{item.knowledgePointId}}" data-name="{{item.name}}">
+      针对练习
+    </view>
+  </view>
+
+  <view class="footer-link" bindtap="goWrongSet">查看错题本 ></view>
+
+</view>

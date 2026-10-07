@@ -1,0 +1,28 @@
+<view class="page">
+  <view class="header">
+    <text class="title">练习作业</text>
+    <text class="subtitle">选择作业包开始答题</text>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">加载中...</view>
+
+  <view class="paper-list" wx:if="{{!loading && papers.length > 0}}">
+    <view
+      class="paper-card"
+      wx:for="{{papers}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="openPaper"
+    >
+      <view class="paper-main">
+        <text class="paper-title">{{item.title || ('作业包 #' + item.id)}}</text>
+        <text class="paper-desc">点击进入答题</text>
+      </view>
+      <text class="paper-arrow">></text>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && papers.length === 0}}">
+    <text>暂无作业包</text>
+  </view>
+</view>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网络安全科普答题平台 · 演示版</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============================ 登录页 ============================ -->
+<div class="login-wrap" id="loginView">
+  <div class="login-card">
+    <h1>网络安全科普答题平台</h1>
+    <p class="login-sub">校园网络安全知识学习与智能诊断系统</p>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="username">账号</label>
+        <input type="text" id="username" placeholder="请输入账号" autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="password">密码</label>
+        <input type="password" id="password" placeholder="请输入密码" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-primary" id="loginBtn">登 录</button>
+    </form>
+
+    <div class="demo-accounts">
+      <p>演示账号（点击自动填入）</p>
+      <div class="demo-account-row">
+        <button data-user="student1" data-pass="123456"><b>student1</b>学生 · 有错题</button>
+        <button data-user="admin" data-pass="admin123"><b>admin</b>管理员</button>
+        <button data-user="student2" data-pass="123456"><b>student2</b>学生 · 未实名</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ 主界面 ============================ -->
+<div id="topbar" class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">网络安全科普答题平台</div>
+    <nav class="nav">
+      <button data-view="diagnosis" class="active">智能诊断</button>
+      <button data-view="news">资讯</button>
+      <button data-view="quiz">答题</button>
+      <button data-view="rank">排行榜</button>
+    </nav>
+    <div class="topbar-user">
+      <div class="user-chip" id="userChip"></div>
+      <div style="font-size:12px;color:var(--text-mute)" id="userRole"></div>
+      <button class="btn-ghost" onclick="logout()">退出</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- ---------------------- 智能诊断 ---------------------- -->
+  <div class="view" id="view-diagnosis">
+    <div id="diagnosisContent"></div>
+  </div>
+
+  <!-- ---------------------- 专项练习 ---------------------- -->
+  <div class="view" id="view-practice">
+    <div id="practiceContent"></div>
+  </div>
+
+  <!-- ------------------------ 资讯 ------------------------ -->
+  <div class="view" id="view-news">
+    <div class="toolbar">
+      <div class="chips" id="categoryChips"></div>
+      <div class="search">
+        <input type="text" id="searchInput" placeholder="搜索资讯标题或内容">
+        <button onclick="searchNews()">搜索</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden" id="newsList"></div>
+  </div>
+
+  <!-- ------------------------ 答题 ------------------------ -->
+  <div class="view" id="view-quiz">
+    <div class="section-title" style="margin-top:0">选择作业包</div>
+    <div id="paperList"></div>
+  </div>
+
+  <!-- ----------------------- 排行榜 ----------------------- -->
+  <div class="view" id="view-rank">
+    <div class="section-title" style="margin-top:0">积分排行榜</div>
+    <div id="rankList"></div>
+  </div>
+
+  <div class="footer-note">
+    当前后端地址：<span id="apiBase"></span><br>
+    本页面为演示版本，与微信小程序共用同一套后端接口与数据库
+  </div>
+</div>
+
+<!-- ======================== 资讯详情弹窗 ======================== -->
+<div class="modal" id="newsModal" onclick="if(event.target===this)closeNewsModal()">
+  <div class="modal-box">
+    <div class="modal-close" onclick="closeNewsModal()">×</div>
+    <div id="newsDetailBody"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

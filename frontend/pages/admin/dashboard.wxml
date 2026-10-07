@@ -1,0 +1,27 @@
+<view class="page">
+  <view wx:if="{{summaryList.length === 0}}" class="empty">
+    暂无活动报名数据
+  </view>
+
+  <view
+    wx:for="{{summaryList}}"
+    wx:key="newsId"
+    class="card"
+    data-id="{{item.newsId}}"
+    bindtap="toggleCard"
+  >
+    <view class="title">{{item.newsTitle}}</view>
+    <view class="meta">参与人数：{{item.registrationCount || 0}}</view>
+    <view class="category">{{item.category}}</view>
+
+    <view wx:if="{{expandedMap[item.newsId]}}" class="student-list">
+      <view class="student-title">学生名单</view>
+      <view wx:if="{{item.studentNicknames && item.studentNicknames.length > 0}}">
+        <view wx:for="{{item.studentNicknames}}" wx:key="*this" class="student-item">
+          {{index + 1}}. {{item}}
+        </view>
+      </view>
+      <view wx:else class="student-empty">暂无报名学生</view>
+    </view>
+  </view>
+</view>

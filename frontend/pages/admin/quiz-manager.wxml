@@ -1,0 +1,47 @@
+<view class="page">
+  <view class="paper-create-card">
+    <view class="label">创建作业包</view>
+    <view class="paper-create-row">
+      <input
+        class="paper-input"
+        placeholder="例如：作业 1 / 测验 2"
+        value="{{newPaperTitle}}"
+        bindinput="onNewPaperInput"
+      />
+      <button class="create-btn" type="primary" size="mini" loading="{{creatingPaper}}" bindtap="createPaper">创建</button>
+    </view>
+  </view>
+
+  <view class="toolbar">
+    <button class="add-btn" type="primary" bindtap="goToAdd">新增题目</button>
+  </view>
+
+  <view wx:if="{{loading}}" class="status">加载中...</view>
+  <view wx:elif="{{papers.length === 0}}" class="status">暂无作业包</view>
+
+  <view wx:for="{{papers}}" wx:for-item="paper" wx:key="id" class="paper-card">
+    <view class="paper-head" data-id="{{paper.id}}" bindtap="togglePaper">
+      <view class="paper-info">
+        <view class="paper-title">{{paper.title || ('作业包 #' + paper.id)}}</view>
+        <view class="paper-count">题目数量：{{paper.quizzes.length}}</view>
+      </view>
+      <view class="paper-actions">
+        <button class="mini-add" size="mini" data-paper-id="{{paper.id}}" catchtap="goToAdd">+ 题目</button>
+        <text class="arrow">{{paper.expanded ? '收起' : '展开'}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{paper.expanded}}" class="quiz-list">
+      <view wx:if="{{paper.quizzes.length === 0}}" class="quiz-empty">该作业包暂无题目</view>
+
+      <view wx:for="{{paper.quizzes}}" wx:for-item="quiz" wx:key="id" class="quiz-item">
+        <view class="question">{{index + 1}}. {{quiz.question}}</view>
+        <view class="answer">答案：{{quiz.answer || '-'}}</view>
+        <view class="actions">
+          <button class="btn edit-btn" size="mini" data-id="{{quiz.id}}" data-paper-id="{{quiz.paperId}}" bindtap="goToEdit">编辑</button>
+          <button class="btn del-btn" size="mini" loading="{{deletingId === quiz.id}}" data-id="{{quiz.id}}" data-paper-id="{{quiz.paperId}}" bindtap="deleteQuiz">删除</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

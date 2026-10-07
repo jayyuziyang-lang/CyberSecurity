@@ -1,0 +1,46 @@
+.page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #222;
+}
+
+.desc {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.field {
+  margin-top: 24rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #444;
+  margin-bottom: 10rpx;
+}
+
+.input {
+  border: 1rpx solid #dce1ea;
+  border-radius: 12rpx;
+  padding: 18rpx;
+  font-size: 28rpx;
+}
+
+.submit-btn {
+  margin-top: 36rpx;
+}

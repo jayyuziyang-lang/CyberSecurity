@@ -1,0 +1,52 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/auth/verify",
+    "pages/news/news",
+    "pages/index/index",
+    "pages/quiz/quiz",
+    "pages/me/me",
+    "pages/intelligent/diagnosis",
+    "pages/intelligent/practice",
+    "pages/wrong-set/wrong-set",
+    "pages/wrong-set/index",
+    "pages/me/profile-edit",
+    "pages/admin/news-publish",
+    "pages/admin/quiz-manager",
+    "pages/admin/quiz-add",
+    "pages/admin/report-manager",
+    "pages/admin/report-detail/report-detail",
+    "pages/admin/dashboard",
+    "pages/report/submit",
+    "pages/news-detail/news-detail",
+    "pages/leaderboard/leaderboard",
+    "pages/logs/logs"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "网络信息安全平台",
+    "navigationBarBackgroundColor": "#ffffff"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1296db",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/news/news",
+        "text": "资讯"
+      },
+      {
+        "pagePath": "pages/index/index",
+        "text": "答题"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

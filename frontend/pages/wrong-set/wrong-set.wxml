@@ -1,0 +1,33 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+
+  <view wx:if="{{!loading && wrongList.length === 0}}" class="empty">
+    暂无错题
+  </view>
+
+  <view
+    wx:for="{{wrongList}}"
+    wx:key="wrongId"
+    class="card"
+    data-id="{{item.wrongId}}"
+    bindtap="toggleItem"
+  >
+    <view class="card-head">
+      <view class="title">{{index + 1}}. {{item.question}}</view>
+      <view class="count">错误 {{item.errorCount || 0}} 次</view>
+    </view>
+    <view class="hint">{{item.expanded ? '点击收起' : '点击查看详情'}}</view>
+
+    <view wx:if="{{item.expanded}}" class="detail">
+      <view wx:for="{{item.optionList}}" wx:for-item="opt" wx:key="key" class="opt {{opt.key === item.normalizedAnswer ? 'correct' : ''}}">
+        <text class="opt-key">{{opt.key}}.</text>
+        <text class="opt-text">{{opt.text}}</text>
+        <text wx:if="{{opt.key === item.normalizedAnswer}}" class="tag">正确</text>
+      </view>
+
+      <view class="answer-row">正确答案：{{item.normalizedAnswer}}</view>
+      <view class="analysis-title">解析：</view>
+      <view class="analysis">{{item.analysis || '暂无解析'}}</view>
+    </view>
+  </view>
+</view>

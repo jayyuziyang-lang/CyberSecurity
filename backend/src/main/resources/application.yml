@@ -1,0 +1,58 @@
+server:
+  # 端口。
+  #
+  # 【为什么用 SERVER_PORT 而不是 PORT】
+  # 一开始我写的是 ${PORT:8080}，因为很多云平台（Render/Railway/Koyeb）
+  # 都用 PORT 注入端口。但实测踩了坑：本机环境里恰好也有个 PORT
+  # （另一个程序设的），后端就去抢那个端口，直接启动失败：
+  #     Web server failed to start. Port 3080 was already in use.
+  #
+  # 改用 SERVER_PORT 更稳妥：
+  #   * Spring Boot 的宽松绑定会自动把它映射到 server.port，效果一样
+  #   * 名字够具体，不会被别的程序随手设的 PORT 撞到
+  #   * 需要迁就平台的 PORT 时，在平台后台加一条
+  #       SERVER_PORT = $PORT
+  #     或者直接填端口号即可
+  port: ${SERVER_PORT:8080}
+
+spring:
+  datasource:
+    # 全部支持环境变量覆盖，方便部署。本地不设环境变量时，用的就是下面这些默认值。
+    #
+    # 为什么用「一整条 JDBC URL」而不是拼 host/port：
+    #   这些平台给的 DATABASE_URL 形如 postgres://user:pass@host/db，
+    #   那是 URI 不是 JDBC 串，Spring 不能直接用，还得写代码解析。
+    #   直接在平台后台填一条 jdbc:postgresql://... 最不容易出错。
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/cybersec_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:123456}
+    driver-class-name: org.postgresql.Driver
+
+  # Redis：本项目代码其实没用到（RedisConfig 是空文件）。
+  # 部署时不配也不影响启动，因为连接是懒加载的。
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+# MyBatis-Plus
+mybatis-plus:
+  configuration:
+    # SQL 日志：本地开着方便调试；部署时设 SQL_LOG=none 关掉，
+    # 否则日志量大，而且会把表结构和 SQL 全打出来。
+    log-impl: ${SQL_LOG:org.apache.ibatis.logging.stdout.StdOutImpl}
+    # 数据库下划线字段 -> Java 驼峰属性（MyBatis-Plus 默认即为 true，这里显式写出，
+    # 避免以后有人改动默认值导致 last_answer_time / knowledge_point_id 等字段映射不上）
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath*:/mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto # 主键自增策略
+
+# 微信相关配置（当前代码未真正调用微信接口，保留占位以便后续接入）
+wx:
+  mp:
+    app-id: ${WX_APP_ID:wx6026f3b96e704356}
+    secret: ${WX_APP_SECRET:bbc47d23b361f3e5f6fb5d500b7a0cd5}
+    token: ${WX_TOKEN:miao123}  # 这里随便写，但要和网页上的 Token 一致
+    aes-key:  # 测试号可以不填

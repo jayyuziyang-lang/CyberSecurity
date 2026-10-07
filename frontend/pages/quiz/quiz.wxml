@@ -1,0 +1,29 @@
+<view class="container">
+  <view class="header">
+    <text class="paper-name">{{paperTitle || ('作业包 #' + paperId)}}</text>
+    <text class="progress" wx:if="{{quizzes.length > 0}}">第 {{currentIndex + 1}} / {{quizzes.length}} 题</text>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">题目加载中...</view>
+
+  <view wx:if="{{!loading && quizzes.length > 0 && !finished}}" class="quiz-card">
+    <view class="question">{{quizzes[currentIndex].question}}</view>
+
+    <view class="options">
+      <button bindtap="selectOption" data-ans="A" class="option-btn">A. {{quizzes[currentIndex].optionA}}</button>
+      <button bindtap="selectOption" data-ans="B" class="option-btn">B. {{quizzes[currentIndex].optionB}}</button>
+      <button bindtap="selectOption" data-ans="C" class="option-btn">C. {{quizzes[currentIndex].optionC}}</button>
+      <button bindtap="selectOption" data-ans="D" class="option-btn">D. {{quizzes[currentIndex].optionD}}</button>
+    </view>
+
+    <button
+      wx:if="{{currentIndex === quizzes.length - 1}}"
+      class="submit-btn"
+      type="primary"
+      loading="{{submitting}}"
+      bindtap="submitPaper"
+    >提交作业</button>
+  </view>
+
+  <view wx:if="{{!loading && quizzes.length === 0}}" class="empty">该作业包暂无题目</view>
+</view>

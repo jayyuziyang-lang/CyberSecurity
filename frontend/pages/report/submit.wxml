@@ -1,0 +1,38 @@
+<view class="page">
+  <view class="card">
+    <view class="field">
+      <view class="label">举报类别</view>
+      <picker mode="selector" range="{{categoryOptions}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+        <view class="picker">{{categoryOptions[categoryIndex]}}</view>
+      </picker>
+    </view>
+
+    <view class="field">
+      <view class="label">举报描述</view>
+      <textarea
+        class="textarea"
+        placeholder="请详细描述你发现的安全问题..."
+        maxlength="-1"
+        value="{{description}}"
+        bindinput="onDescriptionInput"
+      ></textarea>
+    </view>
+
+    <view class="field">
+      <view class="label">问题截图（最多3张）</view>
+      <view class="image-grid">
+        <view class="upload-box" bindtap="chooseImages" wx:if="{{imageList.length < 3}}">
+          <text class="upload-plus">+</text>
+          <text class="upload-tip">上传图片</text>
+        </view>
+
+        <view class="image-item" wx:for="{{imageList}}" wx:key="*this">
+          <image class="preview" src="{{item}}" mode="aspectFill" data-src="{{item}}" bindtap="previewImage"></image>
+          <view class="remove-btn" data-index="{{index}}" bindtap="removeImage">删除</view>
+        </view>
+      </view>
+    </view>
+
+    <button class="submit-btn" type="warn" bindtap="submitReport">提交举报</button>
+  </view>
+</view>

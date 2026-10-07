@@ -1,0 +1,262 @@
+.page {
+  min-height: 100vh;
+  background: #f4f6f8;
+  padding: 24rpx 24rpx 60rpx;
+  box-sizing: border-box;
+}
+
+/* ---------- 顶部信息 ---------- */
+.practice-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ph-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.ph-strategy {
+  font-size: 26rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+.ph-point {
+  font-size: 22rpx;
+  color: #2b5cff;
+  margin-top: 6rpx;
+}
+
+.ph-progress {
+  font-size: 26rpx;
+  color: #888888;
+}
+
+.progress-track {
+  margin-top: 20rpx;
+  height: 10rpx;
+  background: #e6eaf0;
+  border-radius: 5rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #2b5cff;
+  border-radius: 5rpx;
+  transition: width 0.3s ease;
+}
+
+/* ---------- 题目 ---------- */
+.question-card {
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 32rpx 28rpx;
+  margin-top: 26rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.question-text {
+  font-size: 32rpx;
+  color: #222222;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.option-item {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 24rpx;
+  padding: 22rpx 24rpx;
+  border: 2rpx solid #e6eaf0;
+  border-radius: 14rpx;
+  transition: all 0.2s ease;
+}
+
+.option-item.selected {
+  border-color: #2b5cff;
+  background: #f0f5ff;
+}
+
+.option-item.correct {
+  border-color: #19be6b;
+  background: #e8f8f0;
+}
+
+.option-item.wrong {
+  border-color: #e54d42;
+  background: #fdeceb;
+}
+
+.option-key {
+  width: 44rpx;
+  height: 44rpx;
+  line-height: 44rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: #f0f2f5;
+  color: #666666;
+  font-size: 24rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.option-item.selected .option-key {
+  background: #2b5cff;
+  color: #ffffff;
+}
+
+.option-item.correct .option-key {
+  background: #19be6b;
+  color: #ffffff;
+}
+
+.option-item.wrong .option-key {
+  background: #e54d42;
+  color: #ffffff;
+}
+
+.option-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #444444;
+  line-height: 1.5;
+}
+
+/* ---------- 判卷结果 ---------- */
+.result-card {
+  margin-top: 24rpx;
+  border-radius: 18rpx;
+  padding: 26rpx 28rpx;
+}
+
+.result-correct {
+  background: #e8f8f0;
+  border-left: 8rpx solid #19be6b;
+}
+
+.result-wrong {
+  background: #fdeceb;
+  border-left: 8rpx solid #e54d42;
+}
+
+.result-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.result-analysis {
+  margin-top: 18rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.ra-label {
+  font-size: 22rpx;
+  color: #888888;
+  margin-bottom: 8rpx;
+}
+
+.ra-text {
+  font-size: 25rpx;
+  color: #555555;
+  line-height: 1.7;
+}
+
+/* ---------- 按钮 ---------- */
+.action-bar {
+  margin-top: 40rpx;
+}
+
+.btn-primary {
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: #2b5cff;
+  color: #ffffff;
+  font-size: 30rpx;
+  border-radius: 14rpx;
+}
+
+/* ---------- 结束页 ---------- */
+.finish-card {
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 60rpx 40rpx 50rpx;
+  margin-top: 60rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.finish-title {
+  font-size: 32rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+.finish-score {
+  margin-top: 30rpx;
+  display: flex;
+  align-items: baseline;
+}
+
+.fs-num {
+  font-size: 96rpx;
+  font-weight: 700;
+  color: #2b5cff;
+  line-height: 1;
+}
+
+.fs-total {
+  font-size: 34rpx;
+  color: #999999;
+}
+
+.finish-label {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.finish-stats {
+  display: flex;
+  margin-top: 40rpx;
+  width: 100%;
+  background: #f7f9fc;
+  border-radius: 14rpx;
+  padding: 24rpx 0;
+}
+
+.fs-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fs-item-num {
+  font-size: 40rpx;
+  font-weight: 700;
+}
+
+.fs-item-num.correct { color: #19be6b; }
+.fs-item-num.wrong { color: #e54d42; }
+
+.fs-item-label {
+  font-size: 22rpx;
+  color: #999999;
+  margin-top: 6rpx;
+}
+
+.finish-tip {
+  margin: 34rpx 0 30rpx;
+  font-size: 24rpx;
+  color: #999999;
+  text-align: center;
+  line-height: 1.6;
+}

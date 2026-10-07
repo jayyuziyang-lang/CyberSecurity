@@ -1,0 +1,52 @@
+<scroll-view class="category-tabs" scroll-x="true" enable-flex="true">
+  <view
+    class="tab-item {{activeCategory === item ? 'active' : ''}}"
+    wx:for="{{categories}}"
+    wx:key="*this"
+    data-category="{{item}}"
+    bindtap="onTabChange"
+  >
+    {{item}}
+  </view>
+</scroll-view>
+
+<view class="search-container">
+  <view class="search-bar">
+    <icon class="search-icon" type="search" size="16"></icon>
+    <input
+      class="search-input"
+      placeholder="Search security news..."
+      value="{{searchKeyword}}"
+      bindinput="onSearchInput"
+      bindconfirm="doSearch"
+      confirm-type="search"
+    />
+    <icon
+      wx:if="{{searchKeyword}}"
+      class="clear-icon"
+      type="clear"
+      size="16"
+      bindtap="onClearSearch"
+    ></icon>
+  </view>
+  <view class="search-btn" bindtap="doSearch">搜索</view>
+</view>
+
+<scroll-view class="news-scroll-view" scroll-y="true">
+  <block wx:if="{{newsList.length > 0}}">
+    <view class="news-item" wx:for="{{newsList}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+      <view class="news-info">
+        <text class="news-title">{{item.title}}</text>
+        <view class="news-meta">
+          <text class="news-author">{{item.author || 'System Admin'}}</text>
+          <text class="news-date">{{item.createTime}}</text>
+        </view>
+      </view>
+      <image class="news-cover" src="{{item.coverUrl || item.image}}" mode="aspectFill"></image>
+    </view>
+  </block>
+
+  <view class="empty-state" wx:else>
+    <text class="empty-text">No content found, try another keyword.</text>
+  </view>
+</scroll-view>

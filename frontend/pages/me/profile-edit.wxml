@@ -1,0 +1,22 @@
+<view class="page">
+  <view class="card">
+    <view class="section-title">资料设置</view>
+
+    <view class="avatar-wrap">
+      <image class="avatar" src="{{avatarUrl}}" mode="aspectFill"></image>
+      <button class="avatar-btn" size="mini" bindtap="chooseAvatar">更换头像</button>
+    </view>
+
+    <view class="field">
+      <view class="label">昵称</view>
+      <input
+        class="input"
+        placeholder="请输入昵称"
+        value="{{nickname}}"
+        bindinput="onNicknameInput"
+      />
+    </view>
+
+    <button class="save-btn" type="primary" loading="{{saving}}" bindtap="saveProfile">保存</button>
+  </view>
+</view>

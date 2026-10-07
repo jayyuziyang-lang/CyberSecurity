@@ -1,0 +1,282 @@
+.page {
+  min-height: 100vh;
+  background: #f4f6f8;
+  padding: 24rpx 24rpx 60rpx;
+  box-sizing: border-box;
+}
+
+/* ---------- 概览卡片 ---------- */
+.overview-card {
+  background: linear-gradient(135deg, #2b5cff 0%, #4a8dff 100%);
+  border-radius: 20rpx;
+  padding: 36rpx 32rpx 28rpx;
+  color: #ffffff;
+  box-shadow: 0 8rpx 24rpx rgba(43, 92, 255, 0.25);
+}
+
+.ov-title {
+  font-size: 28rpx;
+  opacity: 0.9;
+  letter-spacing: 2rpx;
+}
+
+.ov-score-row {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 20rpx;
+}
+
+.ov-score {
+  display: flex;
+  align-items: baseline;
+}
+
+.ov-score-num {
+  font-size: 88rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ov-score-unit {
+  font-size: 28rpx;
+  margin-left: 8rpx;
+  opacity: 0.9;
+}
+
+.ov-score-desc {
+  margin-left: 28rpx;
+  padding-bottom: 10rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.ov-score-label {
+  font-size: 26rpx;
+  opacity: 0.95;
+}
+
+.ov-point-count {
+  font-size: 22rpx;
+  opacity: 0.75;
+  margin-top: 6rpx;
+}
+
+.ov-stat-row {
+  display: flex;
+  margin-top: 28rpx;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 14rpx;
+  padding: 18rpx 0;
+}
+
+.ov-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ov-stat-num {
+  font-size: 36rpx;
+  font-weight: 600;
+}
+
+.ov-stat-num.weak { color: #ffd7d5; }
+.ov-stat-num.basic { color: #ffe9c2; }
+.ov-stat-num.proficient { color: #cdf5e0; }
+
+.ov-stat-label {
+  font-size: 22rpx;
+  opacity: 0.85;
+  margin-top: 6rpx;
+}
+
+.ov-summary {
+  margin-top: 24rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+  opacity: 0.92;
+}
+
+/* ---------- 推荐卡片 ---------- */
+.section-card {
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 30rpx 28rpx;
+  margin-top: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.recommend-card {
+  border-left: 8rpx solid #2b5cff;
+}
+
+.rec-head {
+  display: flex;
+  align-items: center;
+}
+
+.rec-badge {
+  font-size: 22rpx;
+  color: #ffffff;
+  background: #2b5cff;
+  border-radius: 8rpx;
+  padding: 4rpx 14rpx;
+  margin-right: 14rpx;
+}
+
+.rec-strategy {
+  font-size: 26rpx;
+  color: #333333;
+}
+
+.rec-target {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.rec-point-name {
+  color: #2b5cff;
+  font-weight: 600;
+}
+
+.rec-desc {
+  margin-top: 14rpx;
+  font-size: 24rpx;
+  color: #888888;
+  line-height: 1.6;
+}
+
+.rec-btn {
+  margin-top: 26rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  background: #2b5cff;
+  color: #ffffff;
+  font-size: 28rpx;
+  border-radius: 12rpx;
+}
+
+/* ---------- 空状态 ---------- */
+.empty-card {
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 60rpx 40rpx;
+  margin-top: 24rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.empty-title {
+  font-size: 30rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+.empty-desc {
+  margin-top: 18rpx;
+  font-size: 24rpx;
+  color: #999999;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* ---------- 知识点明细 ---------- */
+.section-title {
+  margin: 36rpx 0 20rpx 8rpx;
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+.point-card {
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 28rpx 28rpx 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.point-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.point-name-row {
+  display: flex;
+  align-items: center;
+}
+
+.point-name {
+  font-size: 30rpx;
+  color: #222222;
+  font-weight: 600;
+}
+
+.point-level {
+  font-size: 20rpx;
+  border-radius: 6rpx;
+  padding: 2rpx 12rpx;
+  margin-left: 14rpx;
+}
+
+.point-mastery {
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.point-category {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.bar-track {
+  margin-top: 20rpx;
+  height: 14rpx;
+  background: #eef1f5;
+  border-radius: 7rpx;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 7rpx;
+  transition: width 0.4s ease;
+}
+
+.point-meta {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.point-desc {
+  margin-top: 12rpx;
+  font-size: 23rpx;
+  color: #999999;
+  line-height: 1.6;
+}
+
+.point-action {
+  margin-top: 22rpx;
+  height: 66rpx;
+  line-height: 66rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #2b5cff;
+  border: 1rpx solid #2b5cff;
+  border-radius: 10rpx;
+}
+
+.footer-link {
+  margin-top: 40rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #2b5cff;
+}

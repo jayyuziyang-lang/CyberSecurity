@@ -1,0 +1,58 @@
+.container {
+  min-height: 100vh;
+  background: #ffffff;
+  padding-bottom: 140rpx;
+}
+
+.cover {
+  width: 100%;
+  display: block;
+  background: #f2f2f2;
+}
+
+.content-wrap {
+  padding: 28rpx;
+}
+
+.title {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #222;
+  line-height: 1.45;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  margin-top: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #efefef;
+}
+
+.author {
+  color: #1296db;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.time {
+  margin-left: 20rpx;
+  color: #999;
+  font-size: 24rpx;
+}
+
+.content-text {
+  margin-top: 24rpx;
+  color: #333;
+  font-size: 30rpx;
+  line-height: 1.8;
+}
+
+.register-btn {
+  position: fixed;
+  left: 24rpx;
+  right: 24rpx;
+  bottom: 24rpx;
+  border-radius: 999rpx;
+  box-shadow: 0 10rpx 26rpx rgba(18, 150, 219, 0.3);
+}

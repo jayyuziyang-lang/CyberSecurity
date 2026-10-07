@@ -1,0 +1,78 @@
+<view class="page">
+
+  <!-- 练习中 -->
+  <block wx:if="{{!finished}}">
+    <view class="practice-header">
+      <view class="ph-left">
+        <text class="ph-strategy">{{strategy}}</text>
+        <text class="ph-point" wx:if="{{knowledgePointName}}">{{knowledgePointName}}</text>
+      </view>
+      <text class="ph-progress">{{currentIndex + 1}} / {{quizzes.length}}</text>
+    </view>
+
+    <view class="progress-track">
+      <view class="progress-fill" style="width:{{(currentIndex + 1) * 100 / quizzes.length}}%"></view>
+    </view>
+
+    <view class="question-card">
+      <view class="question-text">{{current.question}}</view>
+
+      <view
+        class="option-item {{selected === item.key ? 'selected' : ''}} {{submitted && item.key === correctAnswer ? 'correct' : ''}} {{submitted && item.key === selected && item.key !== correctAnswer ? 'wrong' : ''}}"
+        wx:for="{{optionList}}"
+        wx:key="key"
+        bindtap="selectOption"
+        data-ans="{{item.key}}"
+      >
+        <text class="option-key">{{item.key}}</text>
+        <text class="option-text">{{item.text}}</text>
+      </view>
+    </view>
+
+    <!-- 判卷结果 -->
+    <view class="result-card {{isCorrect ? 'result-correct' : 'result-wrong'}}" wx:if="{{submitted}}">
+      <view class="result-title">
+        <text wx:if="{{isCorrect}}">回答正确</text>
+        <text wx:else>回答错误，正确答案是 {{correctAnswer}}</text>
+      </view>
+      <view class="result-analysis" wx:if="{{analysis}}">
+        <text class="ra-label">解析</text>
+        <text class="ra-text">{{analysis}}</text>
+      </view>
+    </view>
+
+    <view class="action-bar">
+      <view class="btn-primary" wx:if="{{!submitted}}" bindtap="submitAnswer">提交答案</view>
+      <view class="btn-primary" wx:else bindtap="nextQuestion">
+        {{currentIndex + 1 < quizzes.length ? '下一题' : '完成练习'}}
+      </view>
+    </view>
+  </block>
+
+  <!-- 练习结束 -->
+  <block wx:else>
+    <view class="finish-card">
+      <view class="finish-title">练习完成</view>
+      <view class="finish-score">
+        <text class="fs-num">{{correctCount}}</text>
+        <text class="fs-total"> / {{correctCount + wrongCount}}</text>
+      </view>
+      <view class="finish-label">本次答对题数</view>
+
+      <view class="finish-stats">
+        <view class="fs-item">
+          <text class="fs-item-num correct">{{correctCount}}</text>
+          <text class="fs-item-label">答对</text>
+        </view>
+        <view class="fs-item">
+          <text class="fs-item-num wrong">{{wrongCount}}</text>
+          <text class="fs-item-label">答错</text>
+        </view>
+      </view>
+
+      <view class="finish-tip">掌握度已实时更新，返回诊断页可查看最新结果。</view>
+      <view class="btn-primary" bindtap="backToDiagnosis">返回诊断报告</view>
+    </view>
+  </block>
+
+</view>

@@ -1,0 +1,66 @@
+<view class="page">
+  <view class="card">
+    <view class="field">
+      <view class="label">所属作业包</view>
+      <picker mode="selector" range="{{paperOptions}}" range-key="title" value="{{paperIndex}}" bindchange="onPaperChange">
+        <view class="picker">{{paperIndex >= 0 ? paperOptions[paperIndex].title : '请选择作业包'}}</view>
+      </picker>
+    </view>
+
+    <view class="field">
+      <view class="label">题目</view>
+      <textarea
+        class="textarea"
+        placeholder="请输入题目"
+        maxlength="-1"
+        data-field="question"
+        bindinput="onInput"
+        value="{{question}}"
+      ></textarea>
+    </view>
+
+    <view class="field">
+      <view class="label">选项 A</view>
+      <input class="input" placeholder="请输入选项 A" data-field="optionA" bindinput="onInput" value="{{optionA}}" />
+    </view>
+
+    <view class="field">
+      <view class="label">选项 B</view>
+      <input class="input" placeholder="请输入选项 B" data-field="optionB" bindinput="onInput" value="{{optionB}}" />
+    </view>
+
+    <view class="field">
+      <view class="label">选项 C</view>
+      <input class="input" placeholder="请输入选项 C" data-field="optionC" bindinput="onInput" value="{{optionC}}" />
+    </view>
+
+    <view class="field">
+      <view class="label">选项 D</view>
+      <input class="input" placeholder="请输入选项 D" data-field="optionD" bindinput="onInput" value="{{optionD}}" />
+    </view>
+
+    <view class="field">
+      <view class="label">答案</view>
+      <picker mode="selector" range="{{answerOptions}}" value="{{answerIndex}}" bindchange="onAnswerChange">
+        <view class="picker">{{answerOptions[answerIndex]}}</view>
+      </picker>
+    </view>
+
+    <view class="field">
+      <view class="label">解析</view>
+      <textarea
+        class="textarea small"
+        placeholder="请输入解析"
+        maxlength="-1"
+        data-field="analysis"
+        bindinput="onInput"
+        value="{{analysis}}"
+      ></textarea>
+    </view>
+
+    <view class="btn-row">
+      <button class="submit-btn" type="primary" bindtap="submitQuiz">{{mode === 'edit' ? '保存修改' : '发布题目'}}</button>
+      <button wx:if="{{mode !== 'edit'}}" class="import-btn" type="warn" bindtap="importExcel">批量导入</button>
+    </view>
+  </view>
+</view>
