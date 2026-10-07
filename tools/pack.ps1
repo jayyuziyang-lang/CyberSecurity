@@ -120,6 +120,8 @@ $required = @(
     'start-demo.ps1',
     'start-demo.bat',
     'reset-demo.bat',
+    'push-github.bat',
+    'tools/push-via-api.js',
     'db/reset-demo.sql',
     'docs/现场演示清单.md',
     'web-demo/serve_demo.js',
